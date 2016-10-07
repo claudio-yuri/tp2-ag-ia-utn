@@ -1,0 +1,14 @@
+{
+  "name": "tp2-ag-ia-utn",
+  "version": "1.0.0",
+  "description": "Inteligencia Artificial TP: Algoritmos genéticos",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "genetic-js": "^0.1.14"
+  }
+}
