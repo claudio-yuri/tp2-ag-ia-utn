@@ -4,7 +4,7 @@
   "description": "Inteligencia Artificial TP: Algoritmos genéticos",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node monedas.js"
   },
   "author": "",
   "license": "ISC",
