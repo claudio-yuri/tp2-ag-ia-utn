@@ -1,4 +1,4 @@
-# Inteligenia Artificial - UTN FRBA
+# Inteligencia Artificial - UTN FRBA
 ## Trabajo práctico: Algoritmos Genéticos
 
 ### Descripción
