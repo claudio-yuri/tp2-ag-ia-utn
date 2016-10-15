@@ -4,18 +4,19 @@ const Genetic = require('genetic-js');
 var genetic = Genetic.create();
 
 //datos para la corrida
+//en este objeto se le pasan al algoritmo algunos datos que necesita para correr
 const userData = {
+  //esto lo usamos como referencia para pasar los posibles valores de las fichas
   fichas: ["000","001","010","011","100","101"],
+  //esto lo usamos como referencia para pasar los posibles nombres
   nombres: ["Luisa", "Penelope", "Angela", "Daniela", "Miriam", "Cecilia"],
+  //el individuo solución que será utilzado para definir el criterio de paro
   solucion: { Luisa: "000", Penelope: "001", Angela: "010", Daniela: "011", Miriam: "100", Cecilia: "101" },
+  //este es el constructor que usamos para generar individuos (lo tenemos que para así porque dentro del contexto del objeto de genetic no se pueden referrnciar funciones externas)
   newIndividuo: function(p1, p2, p3, p4, p5, p6){
     return { Luisa: p1, Penelope: p2, Angela: p3, Daniela: p4, Miriam: p5, Cecilia: p6 };
   }
 };
-
-genetic.optimize = Genetic.Optimize.Maximize;
-genetic.select1 = Genetic.Select1.Tournament2;
-genetic.select2 = Genetic.Select2.Tournament2;
 
 genetic.seed = function() {
   //copio las fichas
@@ -30,6 +31,7 @@ genetic.seed = function() {
   //creo el individuo y lo retorno
   return this.userData.newIndividuo(fichasParaIndividuo[0], fichasParaIndividuo[1], fichasParaIndividuo[2], fichasParaIndividuo[3], fichasParaIndividuo[4], fichasParaIndividuo[5]);
 };
+//para la mutación definimos el método simple
 genetic.mutate = function(entity) {
   //copio los nombres
   var nombresACambiar = this.userData.nombres.slice();
@@ -82,9 +84,7 @@ genetic.generation = function(pop, generation, stats) {
   if(rp.Luisa == solucion.Luisa && rp.Penelope == solucion.Penelope && rp.Angela == solucion.Angela && rp.Daniela == solucion.Daniela && rp.Miriam == solucion.Miriam && rp.Cecilia == solucion.Cecilia) {
     return true;
   }
-  else {
-    return false;
-  }
+  return false;
 };
 genetic.notification = function(pop, generation, stats, isFinished) {
   if(isFinished){
@@ -92,17 +92,21 @@ genetic.notification = function(pop, generation, stats, isFinished) {
     console.log(stats);
   }
   else {
-    console.log(".");
+    console.log("Iteración ", generation);
   }
 };
 
 //config de la corrida
+genetic.optimize = Genetic.Optimize.Maximize;
+//métodos de selección
+genetic.select1 = Genetic.Select1.RandomLinearRank;
+genetic.select2 = Genetic.Select2.FittestRandom;
+
 var config = {
-  iterations: 6000,
-  size: 250,
-  crossover: 0.3,
-  mutation: 0.3,
-  skip: 20
+  iterations: 400, //cantidad de iteraciones
+  size: 1000, //tamaño de la población
+  crossover: 0.5, //probabilidad de cruce
+  mutation: 0.5, //probabilidad de mutación
 };
 
 //realizar la corrida
