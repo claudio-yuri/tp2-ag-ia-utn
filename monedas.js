@@ -39,6 +39,7 @@ genetic.seed = function() {
   return nuevoIndividuo;
 };
 genetic.mutate = function(entity) {
+  var original = entity.toString().length;
   //copio los nombres
   var nombresACambiar = this.userData.nombres.slice();
   //elijo 2 nombres al azar para intercambiar posiciones
@@ -49,6 +50,10 @@ genetic.mutate = function(entity) {
   var aux = entity[nombre1];
   entity[nombre1] = entity[nombre2];
   entity[nombre2] = entity[aux];
+
+  if(entity.toString().length != original){
+    console.log("lalalaallalalal");
+  }
   return entity;
 };
 genetic.crossover = function(mother, father) {
@@ -56,6 +61,10 @@ genetic.crossover = function(mother, father) {
   const hijo = this.userData.newIndividuo(father.Luisa, father.Penelope, mother.Angela, mother.Daniela, father.Miriam, father.Cecilia);
   //creo a la hija
   const hija = this.userData.newIndividuo(mother.Luisa, mother.Penelope, father.Angela, father.Daniela, mother.Miriam, mother.Cecilia);
+  if(hijo.toString().length != hija.toString().length){
+    console.log("sasa");
+  }
+
   return [hijo, hija];
 };
 genetic.fitness = function(entity) {
@@ -96,10 +105,10 @@ genetic.generation = function(pop, generation, stats) {
 
   //cirterio de paro
   if(rp.Luisa === solucion.Luisa && rp.Penelope === solucion.Penelope && rp.Angela === solucion.Angela && rp.Daniela === solucion.Daniela && rp.Miriam === solucion.Miriam && rp.Cecilia === solucion.Cecilia) {
-    return true;
+    return false;
   }
   else{
-    return false;
+    return true;
   }
 };
 genetic.notification = function(pop, generation, stats, isFinished) {
@@ -120,9 +129,9 @@ genetic.select2 = Genetic.Select2.Tournament3;
 
 var config = {
   iterations: 400, //cantidad de iteraciones
-  size: 1000, //tamaño de la población
-  crossover: 0.5, //probabilidad de cruce
-  mutation: 0.5, //probabilidad de mutación
+  size: 200, //tamaño de la población
+  crossover: 0.9, //probabilidad de cruce
+  mutation: 0.2, //probabilidad de mutación
 };
 
 //realizar la corrida
