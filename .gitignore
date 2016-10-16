@@ -50,3 +50,5 @@ node_modules
 
 fitness*.json
 poblacion*.json
+sample*.json
+out.txt

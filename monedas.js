@@ -13,10 +13,11 @@ const userData = {
   //el individuo solución que será utilzado para definir el criterio de paro
   solucion: { Luisa: "000", Penelope: "001", Angela: "010", Daniela: "011", Miriam: "100", Cecilia: "101" },
   //este es el constructor que usamos para generar individuos (lo tenemos que para así porque dentro del contexto del objeto de genetic no se pueden referrnciar funciones externas)
-  newIndividuo: function(p1, p2, p3, p4, p5, p6){
+  newIndividuo: (p1, p2, p3, p4, p5, p6) => {
     return { Luisa: p1, Penelope: p2, Angela: p3, Daniela: p4, Miriam: p5, Cecilia: p6 };
   },
-  date: new Date().getTime()
+  date: new Date().getTime(),
+  esValida: (entity) => { return entity.hasOwnProperty('Luisa') && entity.hasOwnProperty('Penelope') && entity.hasOwnProperty('Angela') && entity.hasOwnProperty('Daniela') && entity.hasOwnProperty('Miriam') && entity.hasOwnProperty('Cecilia'); }
 };
 
 genetic.seed = function() {
@@ -32,13 +33,16 @@ genetic.seed = function() {
   var nuevoIndividuo = this.userData.newIndividuo(fichasParaIndividuo[0], fichasParaIndividuo[1], fichasParaIndividuo[2], fichasParaIndividuo[3], fichasParaIndividuo[4], fichasParaIndividuo[5]);
 
   //guardo al individuo en un file
-  const fs = require("fs");
-  fs.appendFileSync("poblacion"+ this.userData.date +".json", JSON.stringify(nuevoIndividuo) + "\n");
+  // const fs = require("fs");
+  // fs.appendFileSync("poblacion"+ this.userData.date +".json", JSON.stringify(nuevoIndividuo) + "\n");
 
   //creo el individuo y lo retorno
   return nuevoIndividuo;
 };
 genetic.mutate = function(entity) {
+  // if(!this.userData.esValida(entity)){
+  //   console.log("antes entity 99", entity);
+  // }
   var original = entity.toString().length;
   //copio los nombres
   var nombresACambiar = this.userData.nombres.slice();
@@ -51,9 +55,10 @@ genetic.mutate = function(entity) {
   entity[nombre1] = entity[nombre2];
   entity[nombre2] = entity[aux];
 
-  if(entity.toString().length != original){
-    console.log("lalalaallalalal");
-  }
+  // if(!this.userData.esValida(entity)){
+  //   console.log("mutated entity 99", entity);
+  // }
+
   return entity;
 };
 genetic.crossover = function(mother, father) {
@@ -61,37 +66,93 @@ genetic.crossover = function(mother, father) {
   const hijo = this.userData.newIndividuo(father.Luisa, father.Penelope, mother.Angela, mother.Daniela, father.Miriam, father.Cecilia);
   //creo a la hija
   const hija = this.userData.newIndividuo(mother.Luisa, mother.Penelope, father.Angela, father.Daniela, mother.Miriam, mother.Cecilia);
-  if(hijo.toString().length != hija.toString().length){
-    console.log("sasa");
-  }
+  // if(hijo.toString().length != hija.toString().length){
+  //   console.log("sasa");
+  // }
+  // if(!this.userData.esValida(mother)){
+  //   console.log("mother 99", mother);
+  // }
+  // if(!this.userData.esValida(father)){
+  //   console.log("father 99", father);
+  // }
+  //
+  // if(!this.userData.esValida(hijo)){
+  //   console.log("hijo 99", hijo);
+  // }
+  //
+  // if(!this.userData.esValida(hija)){
+  //   console.log("hija 99", hija);
+  // }
 
   return [hijo, hija];
 };
 genetic.fitness = function(entity) {
-  if(entity.Luisa === "000" && entity.Penelope === "001" && entity.Angela === "010" && entity.Daniela === "011" && entity.Miriam === "100" && entity.Cecilia === "101")
-    return 99;
-  else if(entity.Luisa === "001" && entity.Penelope === "000" && entity.Angela === "010" && entity.Daniela === "011" && entity.Miriam === "100" && entity.Cecilia === "101")
-    return 10;
-  else if(entity.Luisa === "010" && entity.Penelope === "001" && entity.Angela === "000" && entity.Daniela === "011" && entity.Miriam === "100" && entity.Cecilia === "101")
-    return 10;
-  else if(entity.Luisa === "011" && entity.Penelope === "001" && entity.Angela === "010" && entity.Daniela === "000" && entity.Miriam === "100" && entity.Cecilia === "101")
-    return 10;
-  else if(entity.Luisa === "100" && entity.Penelope === "001" && entity.Angela === "010" && entity.Daniela === "011" && entity.Miriam === "000" && entity.Cecilia === "101")
-    return 10;
-  else if(entity.Luisa === "101" && entity.Penelope === "001" && entity.Angela === "010" && entity.Daniela === "011" && entity.Miriam === "100" && entity.Cecilia === "000")
-    return 10;
-  else if(entity.Luisa === "001" && entity.Penelope === "010" && entity.Angela === "000" && entity.Daniela === "011" && entity.Miriam === "100" && entity.Cecilia === "101")
-    return 10;
-  else if(entity.Luisa === "001" && entity.Penelope === "000" && entity.Angela === "011" && entity.Daniela === "010" && entity.Miriam === "100" && entity.Cecilia === "101")
-    return 6;
-  else if(entity.Luisa === "001" && entity.Penelope === "000" && entity.Angela === "011" && entity.Daniela === "100" && entity.Miriam === "010" && entity.Cecilia === "101")
-    return 4;
-  else if(entity.Luisa === "001" && entity.Penelope === "000" && entity.Angela === "011" && entity.Daniela === "010" && entity.Miriam === "101" && entity.Cecilia === "100")
-    return -5;
-  else {
-    //el resto de las conmbinaciones son inválidad porque implican que hay al menos dos personas con la misma ficha
+  if(!this.userData.esValida(entity)){
+    // console.log("puta 99", entity);
     return -99;
   }
+  var matches = 0;
+  if(entity.Luisa == this.userData.solucion.Luisa){
+    matches++;
+  }
+  if(entity.Penelope == this.userData.solucion.Penelope){
+    matches++;
+  }
+  if(entity.Angela == this.userData.solucion.Angela){
+    matches++;
+  }
+  if(entity.Daniela == this.userData.solucion.Daniela){
+    matches++;
+  }
+  if(entity.Miriam == this.userData.solucion.Miriam){
+    matches++;
+  }
+  if(entity.Cecilia == this.userData.solucion.Cecilia){
+    matches++;
+  }
+  /*
+  +99 si es la solución correcta
+  +10 si todos los números de las fichas son correctos menos 2.
+  +8 si todos los números de las fichas son correctos menos 3.
+  +6 si todos los números de las fichas son correctos menos 4.
+  +4 si todos los números de las fichas son correctos menos 5.
+  -5 si todos los números de las fichas son incorrectos.
+  -99 si algún número es inválido o repetido.
+   */
+  switch (matches) {
+    case 6: return 99;
+    case 4: return 10;
+    case 3: return 8;
+    case 2: return 6;
+    case 1: return 4;
+    case 0: return -5;
+    default:
+      return -99;
+  }
+  // if(entity.Luisa === "000" && entity.Penelope === "001" && entity.Angela === "010" && entity.Daniela === "011" && entity.Miriam === "100" && entity.Cecilia === "101")
+  //   return 99;
+  // else if(entity.Luisa === "001" && entity.Penelope === "000" && entity.Angela === "010" && entity.Daniela === "011" && entity.Miriam === "100" && entity.Cecilia === "101")
+  //   return 10;
+  // else if(entity.Luisa === "010" && entity.Penelope === "001" && entity.Angela === "000" && entity.Daniela === "011" && entity.Miriam === "100" && entity.Cecilia === "101")
+  //   return 10;
+  // else if(entity.Luisa === "011" && entity.Penelope === "001" && entity.Angela === "010" && entity.Daniela === "000" && entity.Miriam === "100" && entity.Cecilia === "101")
+  //   return 10;
+  // else if(entity.Luisa === "100" && entity.Penelope === "001" && entity.Angela === "010" && entity.Daniela === "011" && entity.Miriam === "000" && entity.Cecilia === "101")
+  //   return 10;
+  // else if(entity.Luisa === "101" && entity.Penelope === "001" && entity.Angela === "010" && entity.Daniela === "011" && entity.Miriam === "100" && entity.Cecilia === "000")
+  //   return 10;
+  // else if(entity.Luisa === "001" && entity.Penelope === "010" && entity.Angela === "000" && entity.Daniela === "011" && entity.Miriam === "100" && entity.Cecilia === "101")
+  //   return 10;
+  // else if(entity.Luisa === "001" && entity.Penelope === "000" && entity.Angela === "011" && entity.Daniela === "010" && entity.Miriam === "100" && entity.Cecilia === "101")
+  //   return 6;
+  // else if(entity.Luisa === "001" && entity.Penelope === "000" && entity.Angela === "011" && entity.Daniela === "100" && entity.Miriam === "010" && entity.Cecilia === "101")
+  //   return 4;
+  // else if(entity.Luisa === "001" && entity.Penelope === "000" && entity.Angela === "011" && entity.Daniela === "010" && entity.Miriam === "101" && entity.Cecilia === "100")
+  //   return -5;
+  // else {
+  //   //el resto de las conmbinaciones son inválidad porque implican que hay al menos dos personas con la misma ficha
+  //   return -99;
+  // }
 
 };
 genetic.generation = function(pop, generation, stats) {
@@ -100,8 +161,8 @@ genetic.generation = function(pop, generation, stats) {
   var solucion = this.userData.solucion;
 
   //guardo el valor del elemento en un file
-  const fs = require("fs");
-  fs.appendFileSync("fitness"+ this.userData.date +".json", JSON.stringify({ iteracion: generation, fitness: pop[0].fitness, entity: pop[0].entity }) + "\n");
+  // const fs = require("fs");
+  // fs.appendFileSync("fitness"+ this.userData.date +".json", JSON.stringify({ iteracion: generation, fitness: pop[0].fitness, entity: pop[0].entity }) + "\n");
 
   //cirterio de paro
   if(rp.Luisa === solucion.Luisa && rp.Penelope === solucion.Penelope && rp.Angela === solucion.Angela && rp.Daniela === solucion.Daniela && rp.Miriam === solucion.Miriam && rp.Cecilia === solucion.Cecilia) {
@@ -115,6 +176,11 @@ genetic.notification = function(pop, generation, stats, isFinished) {
   if(isFinished){
     console.log("\nsolución ", pop[0].entity);
     console.log(stats);
+    var len = pop.length;
+    console.log("guardando...");
+    var sample = pop.map((x) => { return JSON.stringify({ fitness: x.fitness, entity: x.entity }); });
+    const fs = require("fs");
+    fs.appendFileSync("sample"+ this.userData.date +".json", (sample.join("\n")));
   }
   else {
     console.log("Iteración", generation);
