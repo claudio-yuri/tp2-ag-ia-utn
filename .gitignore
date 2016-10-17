@@ -52,3 +52,4 @@ fitness*.json
 poblacion*.json
 sample*.json
 out.txt
+*.csv

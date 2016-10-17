@@ -18,6 +18,6 @@ Para el desarrollo de este trabajo se usó la biblioteca [genetic-js](https://gi
 1. Instalar NodeJS
 2. Abrir una consola en la carpeta donde se descargó el código fuente y correr `npm start`.
 3. Se generan 3 archivos de salida
-  4. `poblacionXXXXXXXX.json` que contiene la población genrada
-  5. `sampleXXXXXXXX.json` que contiene como quedó la muestra luego de terminar la corrida
-  6. `fitnessXXXXXXXX.json` que contiene la evolución del individuo más apto a treavés de cada corrida
+  4. `poblacionXXXXXXXX.csv` que contiene la población genrada
+  5. `sampleXXXXXXXX.csv` que contiene como quedó la muestra luego de terminar la corrida
+  6. `fitnessXXXXXXXX.csv` que contiene la evolución del individuo más apto a treavés de cada corrida

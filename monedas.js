@@ -27,7 +27,7 @@ const userData = {
            entity.hasOwnProperty('Cecilia') && entity.Cecilia !== undefined;
   }
 };
-
+genetic.seedCounter = 0;
 genetic.seed = function() {
   //copio las fichas
   var nuevasFichas = this.userData.fichas.slice();
@@ -46,7 +46,11 @@ genetic.seed = function() {
 
   //guardo al individuo en un file
   const fs = require("fs");
-  fs.appendFileSync("poblacion"+ this.userData.date +".json", JSON.stringify(nuevoIndividuo) + "\n");
+  // fs.appendFileSync("poblacion"+ this.userData.date +".json", JSON.stringify(nuevoIndividuo) + "\n");
+  if(this.seedCounter === 0){
+    fs.appendFileSync("poblacion"+ this.userData.date +".csv", "Individuo;Luisa;Penelope;Angela;Daniela;Miriam;Cecilia\n");
+  }
+  fs.appendFileSync("poblacion"+ this.userData.date +".csv", ++this.seedCounter + ";'" + nuevoIndividuo.Luisa + "';'" + nuevoIndividuo.Penelope + "';'" + nuevoIndividuo.Angela + "';'" + nuevoIndividuo.Daniela + "';'" + nuevoIndividuo.Miriam + "';'" + nuevoIndividuo.Cecilia + "'\n");
 
   //creo el individuo y lo retorno
   return nuevoIndividuo;
@@ -78,6 +82,22 @@ genetic.fitness = function(entity) {
   if(!this.userData.esValida(entity)){
     return -99;
   }
+
+  //verifico valores duplicados
+  var values = [];
+  values.push(entity.Luisa);
+  values.push(entity.Penelope);
+  values.push(entity.Angela);
+  values.push(entity.Daniela);
+  values.push(entity.Miriam);
+  values.push(entity.Cecilia);
+  var isDuplicate = values.some(function(item, idx){
+      return values.indexOf(item) != idx;
+  });
+  if(isDuplicate){
+    return -99;
+  }
+
   var matches = 0;
   if(entity.Luisa === this.userData.solucion.Luisa){
     matches++;
@@ -127,7 +147,12 @@ genetic.generation = function(pop, generation, stats) {
 
   //guardo el estado del individuo más apto
   const fs = require("fs");
-  fs.appendFileSync("fitness"+ this.userData.date +".json", JSON.stringify({ iteracion: generation, fitness: pop[0].fitness, entity: pop[0].entity }) + "\n");
+  // fs.appendFileSync("fitness"+ this.userData.date +".json", JSON.stringify({ iteracion: generation, fitness: pop[0].fitness, entity: pop[0].entity }) + "\n");
+  if(generation === 0){
+    fs.appendFileSync("fitness"+ this.userData.date +".csv", "Generación;Aptitud;Luisa;Penelope;Angela;Daniela;Miriam;Cecilia\n");
+  }
+  fs.appendFileSync("fitness"+ this.userData.date +".csv", generation + ";" + pop[0].fitness + ";'" +
+        rp.Luisa + "';'" + rp.Penelope + "';'" + rp.Angela + "';'" + rp.Daniela + "';'" + rp.Miriam + "';'" + rp.Cecilia + "'\n");
 
   //cirterio de paro
   if(rp.Luisa === solucion.Luisa && rp.Penelope === solucion.Penelope && rp.Angela === solucion.Angela && rp.Daniela === solucion.Daniela && rp.Miriam === solucion.Miriam && rp.Cecilia === solucion.Cecilia) {
@@ -139,20 +164,16 @@ genetic.generation = function(pop, generation, stats) {
 };
 genetic.notification = function(pop, generation, stats, isFinished) {
   if(isFinished){
-    if(!this.userData.esValida(pop[0].entity)){
-      console.log("la putraasa sakjdnaskl ads");
-    }
-    console.log("\nsolución ", pop[0].entity);
-    console.log(stats);
+    console.log("\nSolución ", pop[0].entity);
+    console.log("Estadísticas:",stats);
+    console.log("Cantidad de generaciones:", generation);
     var len = pop.length;
-    console.log("guardando...");
     //guardo el estado de la muestra al finalizar la corrida
-    var sample = pop.map((x) => { return JSON.stringify({ fitness: x.fitness, entity: x.entity }); });
+    // var sample = pop.map((x) => { return JSON.stringify({ fitness: x.fitness, entity: x.entity }); });
+    var sample = pop.map((x) => { return x.fitness + ";'" + x.entity.Luisa + "';'" + x.entity.Penelope + "';" + x.entity.Angela + "';'" +
+                                                             x.entity.Daniela + "';'" + x.entity.Miriam + "';'" + x.entity.Cecilia + "'" ; });
     const fs = require("fs");
-    fs.appendFileSync("sample"+ this.userData.date +".json", (sample.join("\n")));
-  }
-  else {
-    console.log("Iteración", generation);
+    fs.appendFileSync("sample"+ this.userData.date +".csv", "Aptitud;Luisa;Penelope;Angela;Daniela;Miriam;Cecilia\n" + (sample.join("\n")));
   }
 };
 
@@ -169,6 +190,8 @@ var config = {
   mutation: 0.2, //probabilidad de mutación
   fittestAlwaysSurvives: false
 };
+
+console.log("Configuración: ",config);
 
 //realizar la corrida
 genetic.evolve(config, userData);
