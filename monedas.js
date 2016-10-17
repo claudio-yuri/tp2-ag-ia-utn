@@ -165,8 +165,8 @@ genetic.generation = function(pop, generation, stats) {
 genetic.notification = function(pop, generation, stats, isFinished) {
   if(isFinished){
     console.log("\nSolución ", pop[0].entity);
-    console.log("Estadísticas:",stats);
     console.log("Cantidad de generaciones:", generation);
+    console.log("Estadísticas:",stats);
     var len = pop.length;
     //guardo el estado de la muestra al finalizar la corrida
     // var sample = pop.map((x) => { return JSON.stringify({ fitness: x.fitness, entity: x.entity }); });
@@ -177,21 +177,23 @@ genetic.notification = function(pop, generation, stats, isFinished) {
   }
 };
 
+var seleccion = ["RandomLinearRank","FittestRandom"];
 //config de la corrida
 genetic.optimize = Genetic.Optimize.Maximize;
 //métodos de selección
-genetic.select1 = Genetic.Select1.Tournament2;
-genetic.select2 = Genetic.Select2.Tournament3;
+genetic.select1 = Genetic.Select1[seleccion[0]];
+genetic.select2 = Genetic.Select2[seleccion[1]];
 
 var config = {
-  iterations: 400, //cantidad de iteraciones
-  size: 500, //tamaño de la población
+  iterations: 1200, //cantidad de iteraciones
+  size: 2200, //tamaño de la población
   crossover: 0.9, //probabilidad de cruce
-  mutation: 0.2, //probabilidad de mutación
+  mutation: 0.9, //probabilidad de mutación
   fittestAlwaysSurvives: false
 };
 
-console.log("Configuración: ",config);
+console.log("Configuración:", config);
+console.log("Tipo de seleccion:", seleccion.join(", "));
 
 //realizar la corrida
 genetic.evolve(config, userData);
